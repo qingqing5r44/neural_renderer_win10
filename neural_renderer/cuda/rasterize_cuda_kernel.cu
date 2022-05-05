@@ -5,6 +5,7 @@
 #include <cuda_runtime.h>
 
 // for the older gpus atomicAdd with double arguments does not exist
+/*
 #if  __CUDA_ARCH__ < 600 and defined(__CUDA_ARCH__)
 static __inline__ __device__ double atomicAdd(double* address, double val) {
     unsigned long long int* address_as_ull = (unsigned long long int*)address;
@@ -17,6 +18,24 @@ static __inline__ __device__ double atomicAdd(double* address, double val) {
     } while (assumed != old);
     return __longlong_as_double(old);
 }
+#endif
+*/
+#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
+
+#else
+static __inline__ __device__ double atomicAdd(double *address, double val) {
+unsigned long long int* address_as_ull = (unsigned long long int*)address;
+unsigned long long int old = *address_as_ull, assumed;
+if (val==0.0)
+    return __longlong_as_double(old);
+do {
+    assumed = old;
+    old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+} while (assumed != old);
+return __longlong_as_double(old);
+}
+
+
 #endif
 
 namespace{
@@ -309,16 +328,16 @@ __global__ void backward_pixel_map_cuda_kernel(
 
             /* along edge */
             int d0_from, d0_to;
-            d0_from = max(ceil(min(p[0][0], p[1][0])), 0.);
+            d0_from = max(ceilf(min(p[0][0], p[1][0])), 0.);
             d0_to = min(max(p[0][0], p[1][0]), is - 1.);
             for (int d0 = d0_from; d0 <= d0_to; d0++) {
                 /* get cross point */
                 int d1_in, d1_out;
                 const scalar_t d1_cross = (p[1][1] - p[0][1]) / (p[1][0] - p[0][0]) * (d0 - p[0][0]) + p[0][1];
                 if (0 < direction)
-                    d1_in = floor(d1_cross);
+                    d1_in = floorf(d1_cross);
                 else
-                    d1_in = ceil(d1_cross);
+                    d1_in = ceilf(d1_cross);
                 d1_out = d1_in + direction;
 
                 /* continue if cross point is not shown */
@@ -424,9 +443,9 @@ __global__ void backward_pixel_map_cuda_kernel(
                         d0_cross2 = (p[1][1] - p[2][1]) / (p[1][0] - p[2][0]) * (d0 - p[2][0]) + p[2][1];
                     }
                     if (0 < direction)
-                        d1_limit = ceil(d0_cross2);
+                        d1_limit = ceilf(d0_cross2);
                     else
-                        d1_limit = floor(d0_cross2);
+                        d1_limit = floorf(d0_cross2);
                     int d1_from = max(min(d1_in, d1_limit), 0);
                     int d1_to = min(max(d1_in, d1_limit), is - 1);
 
