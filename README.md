@@ -2,7 +2,11 @@
 
 This version could be used in Windows 10. 
 
-Test Version: Win10 python3.6 torch1.1.0 cuda10.0
+Test version: Win10 python3.6 torch1.1.0 cuda10.0 -->install successfully
+
+Code derive from: https://github.com/lstcutong/neural_renderer_pytorch-win10
+
+Great instructions for win10 users: https://github.com/daniilidis-group/neural_renderer/issues/47#
 
 ---
 
