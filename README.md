@@ -1,5 +1,11 @@
 # Neural 3D Mesh Renderer (CVPR 2018)
 
+This version could be used in Windows 10. 
+
+Test Version: Win10 python3.6 torch==1.1.0 cuda10.0
+
+---
+
 This repo contains a PyTorch implementation of the paper [Neural 3D Mesh Renderer](http://hiroharu-kato.com/projects_en/neural_renderer.html) by Hiroharu Kato, Yoshitaka Ushiku, and Tatsuya Harada.
 It is a port of the [original Chainer implementation](https://github.com/hiroharu-kato/neural_renderer) released by the authors.
 Currently the API is the same as in the original implementation with some smalls additions (e.g. render using a general 3x4 camera matrix, lens distortion coefficients etc.). However it is possible that it will change in the future.
