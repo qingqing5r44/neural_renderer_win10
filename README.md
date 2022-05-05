@@ -2,7 +2,7 @@
 
 This version could be used in Windows 10. 
 
-Test Version: Win10 python3.6 torch==1.1.0 cuda10.0
+Test Version: Win10 python3.6 torch1.1.0 cuda10.0
 
 ---
 
